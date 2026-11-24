@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAD 軟體評估</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Cormorant+Garamond:wght@500;600&display=swap">
+<style>
+/* VOICE: calm, considered, like a designer's material sample book.
+   IDEA: a swatch book — one page open at a time, flipped by a strip of material tabs at the bottom.
+   PICTURE: an arch niche with material swatches (clay, sage, walnut) on the opening page.
+   COLOUR and TYPE: linen ground, walnut ink, clay accent, sage support; Noto Serif TC titles, Noto Sans TC text.
+   LAYOUT: single reading column up to 1080px, fixed bottom tab bar that scrolls sideways on phones. */
+:root{
+  color-scheme:light dark;
+  --bg:light-dark(#F4EFE7,#1E1916);
+  --panel:light-dark(#E8DFD2,#2A231E);
+  --card:light-dark(#FBF8F3,#332B25);
+  --ink:light-dark(#2F2722,#F1E9DE);
+  --soft:light-dark(#5A4E45,#C9BBA8);
+  --clay:light-dark(#9C4F35,#E0957A);
+  --sage:light-dark(#5F6B4D,#A9B791);
+  --walnut:light-dark(#2F2722,#8C7A6B);
+  --line:light-dark(#CDBFAD,#4A3F37);
+  --bar:light-dark(#2F2722,#120E0C);
+  --barInk:light-dark(#E8DFD2,#E8DFD2);
+  --serif:'Noto Serif TC',Georgia,serif;
+  --sans:'Noto Sans TC',Arial,sans-serif;
+  --latin:'Cormorant Garamond',Georgia,serif;
+}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 var(--sans);overflow-x:clip}
+main{max-width:1080px;margin:0 auto;padding:clamp(28px,5vw,64px) max(5vw,16px) 150px}
+h1,h2,h3{font-family:var(--serif);font-weight:500;color:var(--ink);text-wrap:balance;margin:0}
+h1{font-size:clamp(36px,6vw,56px);line-height:1.15}
+h2{font-size:clamp(28px,4vw,40px);line-height:1.2;margin-bottom:12px}
+h3{font-size:22px;line-height:1.35;margin-bottom:8px}
+p{margin:0 0 12px;color:var(--soft)}
+.kicker{font-size:15px;color:var(--clay);font-weight:500;margin-bottom:10px}
+.lead{font-family:var(--serif);font-size:clamp(19px,2.4vw,23px);line-height:1.6;color:var(--ink);max-width:40em;margin-bottom:28px}
+.note{font-size:14px;color:var(--soft)}
+section.view{display:none;animation:rise .5s ease-out both}
+section.view.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@media(prefers-reduced-motion:reduce){section.view{animation:none}}
+.block{margin-top:48px}
+
+/* cover */
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;margin-bottom:40px}
+.hero svg{width:100%;height:auto;display:block;max-height:440px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.toc button{all:unset;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+.toc button:hover{border-color:var(--clay)}
+.toc button:focus-visible{outline:3px solid var(--clay);outline-offset:2px}
+.toc b{display:block;font-family:var(--serif);font-weight:500;font-size:18px;color:var(--ink)}
+.toc span{font-size:14px;color:var(--soft)}
+.dot{flex:none;width:22px;height:22px;border-radius:50%;margin-top:3px}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.tile{background:var(--panel);border-radius:18px;padding:22px}
+.tile .lab{font-size:14px;color:var(--clay);font-weight:500;margin-bottom:4px}
+.tile .val{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.35;margin-bottom:6px}
+.tile p{font-size:14px;margin:0}
+
+/* statement */
+.state{background:var(--clay);color:#F4EFE7;border-radius:26px 26px 0 0;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+:root:not([data-theme=light]) .state{background:light-dark(#9C4F35,#7E3F2A)}
+.state .big{font-family:var(--latin);font-size:clamp(84px,15vw,160px);line-height:1;font-weight:500}
+.state h3{color:#F4EFE7;font-size:clamp(22px,3vw,30px)}
+.state p{color:#EADFD2;margin:0}
+
+/* tables */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;background:var(--card);border-radius:14px;overflow:hidden}
+th{background:var(--panel);color:var(--ink);text-align:start;font-weight:700;padding:12px 16px}
+td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--soft)}
+td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
+.lv{display:inline-block;font-size:14px;font-weight:500;border-radius:999px;padding:2px 12px;white-space:nowrap}
+.hi{background:var(--clay);color:light-dark(#F4EFE7,#1E1916)}
+.mid{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.lo{background:transparent;color:var(--soft);border:1px solid var(--line)}
+
+/* cards */
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;display:flex;flex-direction:column}
+.card .fix{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:15px;color:var(--ink)}
+.card ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.card li{margin-bottom:6px}
+.swatch{height:8px;border-radius:4px;margin-bottom:18px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;counter-reset:s}
+.steps .card{border-top:3px solid var(--walnut);border-radius:0 0 18px 18px}
+.num{font-family:var(--latin);font-size:46px;line-height:1;color:var(--clay);margin-bottom:10px}
+.tag{font-size:14px;color:var(--clay);font-weight:500;margin-bottom:6px}
+
+/* conclusion */
+.closing{background:var(--bar);color:var(--barInk);border-radius:26px 26px 0 0;padding:clamp(28px,5vw,56px)}
+.closing h2{color:#F4EFE7}
+.closing p,.closing li{color:#D6C8B6}
+.closing ul{padding-left:1.2em;margin:0}
+.closing a{color:#F0B59F}
+
+/* bottom tab bar */
+nav.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bar);color:var(--barInk);box-shadow:0 -8px 30px rgba(0,0,0,.15);z-index:5;padding-bottom:env(safe-area-inset-bottom)}
+.barin{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px max(2vw,10px)}
+.tabs{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;flex:1;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button,.arrow{all:unset;cursor:pointer;min-height:44px;border-radius:12px;display:flex;align-items:center;gap:8px;font-size:15px;color:var(--barInk);white-space:nowrap}
+.tabs button{padding:0 14px;scroll-snap-align:start;flex:none}
+.tabs button:hover,.arrow:hover{background:rgba(255,255,255,.08)}
+.tabs button[aria-current=page]{background:#F4EFE7;color:#2F2722}
+.tabs .sw{width:12px;height:12px;border-radius:50%;flex:none}
+.arrow{width:44px;justify-content:center;font-size:20px;flex:none}
+.arrow[disabled]{opacity:.3;pointer-events:none}
+.tabs button:focus-visible,.arrow:focus-visible{outline:3px solid #E0957A;outline-offset:-3px}
+.count{font-family:var(--latin);font-size:18px;color:#B9AA98;flex:none;width:44px;text-align:center}
+
+@media(max-width:700px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero svg{max-height:260px}
+  .state{grid-template-columns:minmax(0,1fr)}
+  .count{display:none}
+}
+@media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-top:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 12px;padding-inline-start:7em;text-align:start;white-space:normal}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-6.5em;white-space:normal;color:var(--ink);font-weight:500}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<main>
+
+<!-- 1 總覽 -->
+<section class="view" id="home" data-title="總覽">
+  <div class="hero">
+    <div>
+      <p class="kicker">開源與替代 CAD 評估 · 2026 年 11 月</p>
+      <h1>CADCraft、ZWCAD<br>與 AutoCAD</h1>
+      <p class="lead" style="margin-top:20px">CADCraft 適合試用，還不能取代 AutoCAD；ZWCAD 是較成熟的低成本替代，但導入前要先用自己的圖檔實測。</p>
+    </div>
+    <svg viewBox="0 0 400 420" role="img" aria-label="拱門壁龕與陶土、鼠尾草、胡桃木材質色票">
+      <defs>
+        <linearGradient id="nic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--panel)"/><stop offset="1" style="stop-color:var(--line)"/></linearGradient>
+        <radialGradient id="g1" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#C47658"/><stop offset="1" stop-color="#8E4630"/></radialGradient>
+        <radialGradient id="g2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#8E9A78"/><stop offset="1" stop-color="#5F6B4D"/></radialGradient>
+        <radialGradient id="g3" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#5A4A40"/><stop offset="1" stop-color="#2F2722"/></radialGradient>
+      </defs>
+      <path d="M110 410 V170 A110 110 0 0 1 330 170 V410 Z" fill="url(#nic)"/>
+      <path d="M130 410 V176 A90 90 0 0 1 310 176 V410" fill="none" style="stroke:var(--bg)" stroke-width="2" opacity=".7"/>
+      <rect x="60" y="398" width="320" height="12" rx="6" style="fill:var(--line)"/>
+      <ellipse cx="128" cy="396" rx="70" ry="8" fill="#000" opacity=".12"/>
+      <circle cx="128" cy="320" r="72" fill="url(#g1)"/>
+      <circle cx="318" cy="70" r="46" fill="url(#g2)"/>
+      <ellipse cx="262" cy="398" rx="34" ry="5" fill="#000" opacity=".12"/>
+      <circle cx="262" cy="362" r="34" fill="url(#g3)"/>
+      <circle cx="106" cy="292" r="16" fill="#fff" opacity=".18"/>
+    </svg>
+  </div>
+  <h2>章節</h2>
+  <p>用下方的選單或左右方向鍵翻頁，也可以直接點選章節。</p>
+  <div class="toc" id="toc"></div>
+</section>
+
+<!-- 2 CADCraft 概況 -->
+<section class="view" id="cadcraft" data-title="CADCraft 概況">
+  <p class="kicker">CADCraft</p>
+  <h2>CADCraft 是什麼</h2>
+  <p class="lead">用 Rust 從零重寫的開源 CAD，操作流程仿照 AutoCAD。免費，不需帳號也不用訂閱。</p>
+  <div class="tiles">
+    <div class="tile"><div class="lab">開發者</div><div class="val">ArtCraft 團隊</div><p>GitHub：storytold/cadcraft</p></div>
+    <div class="tile"><div class="lab">授權</div><div class="val">MIT 或 Apache-2.0</div><p>DWG 函式庫 acadrust 為 MPL-2.0</p></div>
+    <div class="tile"><div class="lab">平台</div><div class="val">Windows、macOS、Linux</div><p>另有 FreeBSD 與瀏覽器版</p></div>
+    <div class="tile"><div class="lab">狀態</div><div class="val">Pre-alpha</div><p>評測引用版本 0.20.1（2026-11-12）</p></div>
+  </div>
+  <div class="block state">
+    <div class="big">38%</div>
+    <div>
+      <h3>專案自評「可用於實際工作」的程度</h3>
+      <p>AutoCAD 選單指令約 50% 已有對應；3D 約 2%（專案自評，2026-10）。評測估計距離 alpha 還需約 125–190 個代理工時。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 功能比較 -->
+<section class="view" id="compare" data-title="CADCraft 功能比較">
+  <p class="kicker">CADCraft 與 AutoCAD</p>
+  <h2>功能逐項比較</h2>
+  <p class="lead">2D 繪圖已有雛形，但 3D、DWG 寫入、動態圖塊與 DCL 都還差得遠。</p>
+  <h3>繪圖與檔案</h3>
+  <table class="stack">
+    <thead><tr><th>項目</th><th>CADCraft</th><th>AutoCAD</th></tr></thead>
+    <tbody>
+      <tr><td>2D 繪圖</td><td>圖層、鎖點、標註、填充線、圖塊、MLEADER、TABLE、配置與視埠</td><td>完整</td></tr>
+      <tr><td>3D</td><td>幾乎沒有（專案自評約 2%）</td><td>完整</td></tr>
+      <tr><td>DWG</td><td>讀 R2000–2018；寫只支援 R2000。評測估計讀約 30%、寫約 15%</td><td>原生格式</td></tr>
+      <tr><td>DXF</td><td>讀 R12–2018；寫 R2000</td><td>完整</td></tr>
+      <tr><td>出圖</td><td>PDF、SVG、PNG；讀不了 .ctb／.pc3，不能直送印表機</td><td>完整</td></tr>
+    </tbody>
+  </table>
+  <h3 class="block" style="margin-top:36px">自訂與協作</h3>
+  <table class="stack">
+    <thead><tr><th>項目</th><th>CADCraft</th><th>AutoCAD</th></tr></thead>
+    <tbody>
+      <tr><td>AutoLISP</td><td>核心可用：APPLOAD、.lsp、啟動載入 acad.lsp</td><td>完整</td></tr>
+      <tr><td>Visual LISP、DCL</td><td>不支援</td><td>完整</td></tr>
+      <tr><td>外部參考</td><td>可附加，有 REFEDIT、XCLIP；不能就地編輯</td><td>完整</td></tr>
+      <tr><td>動態圖塊</td><td>讀取部分支援；不能建立</td><td>完整</td></tr>
+      <tr><td>註解性、圖紙集</td><td>資料未提及，視為不支援</td><td>完整</td></tr>
+      <tr><td>自動化介面</td><td>MCP、JSON 控制通道、cadcraft-cli</td><td>.NET、ObjectARX、LISP</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 4 CADCraft 風險 -->
+<section class="view" id="risks" data-title="CADCraft 風險">
+  <p class="kicker">CADCraft</p>
+  <h2>可用性風險</h2>
+  <p class="lead">最大的問題是資料安全：存檔可能遺失內容，輸出的 DWG 也沒經過 AutoCAD 驗證。</p>
+  <div class="pair">
+    <div class="card">
+      <span class="lv hi" style="align-self:flex-start;margin-bottom:14px">風險程度：高</span>
+      <h3>存檔可能遺失資料</h3>
+      <p>官方 README 明說：尚未建模的物件，存檔時不會保留。代理物件與自訂物件會被丟棄。</p>
+      <p class="fix">緩解：0.15.1 起覆蓋存檔前會警告，可產生 .bak 備份。</p>
+    </div>
+    <div class="card">
+      <span class="lv hi" style="align-self:flex-start;margin-bottom:14px">風險程度：高</span>
+      <h3>DWG 交換不可靠</h3>
+      <p>寫入只支援 R2000，測試多用合成檔案。一個 10 MB 實際檔案約 2 分鐘仍開不起來（issue #57）。</p>
+      <p class="fix">緩解：交付前一律用 AutoCAD 開啟比對。</p>
+    </div>
+  </div>
+  <h3 class="block" style="margin-top:40px">其他風險</h3>
+  <table class="stack">
+    <thead><tr><th>風險</th><th>說明</th><th>程度</th></tr></thead>
+    <tbody>
+      <tr><td>LISP 相容</td><td>用到 DCL 或 vla-／vlax- 函式的程式多半無法執行</td><td><span class="lv hi">高（自製工具）</span></td></tr>
+      <tr><td>商業支援</td><td>沒有廠商支援與相容性保證</td><td><span class="lv hi">高（正式案件）</span></td></tr>
+      <tr><td>幾何精度</td><td>橢圓、雲形線以線段近似，交點與偏移不精確</td><td><span class="lv mid">中</span></td></tr>
+      <tr><td>版本變動</td><td>一個月內未解 issue 從 104 增至 650，程式會自動更新</td><td><span class="lv mid">中</span></td></tr>
+      <tr><td>本機安全</td><td>連上 MCP 的 AI 代理可讀寫使用者能存取的所有檔案</td><td><span class="lv mid">中</span></td></tr>
+    </tbody>
+  </table>
+  <p class="note" style="margin-top:12px">程度依一般設計事務所的使用情境判斷，不是資料來源的評等。</p>
+</section>
+
+<!-- 5 建議 -->
+<section class="view" id="advice" data-title="CADCraft 建議">
+  <p class="kicker">CADCraft</p>
+  <h2>適用情境與試用方法</h2>
+  <p class="lead">可以拿來學習、教學和做自動化實驗；正式出圖與交換圖檔，現階段留在 AutoCAD。</p>
+  <div class="pair">
+    <div class="card"><div class="swatch" style="background:var(--sage)"></div><h3>適合</h3>
+      <ul><li>個人學習與簡單 2D 草圖</li><li>Linux 或瀏覽器環境</li><li>用 AI 代理自動繪圖的實驗</li><li>零授權成本的教學示範</li></ul></div>
+    <div class="card"><div class="swatch" style="background:var(--clay)"></div><h3>不建議</h3>
+      <ul><li>正式案件與合約交付</li><li>與業主、協力廠商往來 DWG</li><li>需要 3D、動態圖塊或圖紙集</li><li>依賴 DCL 對話框的 LISP 工具</li></ul></div>
+  </div>
+  <h3 class="block" style="margin-top:40px">如果要試，這樣做</h3>
+  <div class="steps">
+    <div class="card"><div class="num">1</div><h3>只開副本</h3><p>原檔不動，在副本上作業，並開啟 .bak 備份。</p></div>
+    <div class="card"><div class="num">2</div><h3>回到 AutoCAD 比對</h3><p>存檔後用 AutoCAD 開啟，檢查圖塊、外部參考與標註是否完整。</p></div>
+    <div class="card"><div class="num">3</div><h3>先測 LISP 工具</h3><p>逐支執行常用程式，記下 DCL 與 vla- 函式的失敗點。</p></div>
+  </div>
+</section>
+
+<!-- 6 ZWCAD -->
+<section class="view" id="zwcad" data-title="ZWCAD 比較">
+  <p class="kicker">ZWCAD</p>
+  <h2>ZWCAD 與 AutoCAD</h2>
+  <p class="lead">商業授權的 AutoCAD 相容 CAD，主打原生 DWG、相近介面與永久授權。不少數據來自廠商自己的說法。</p>
+  <div class="tiles">
+    <div class="tile"><div class="lab">開發商</div><div class="val">中望軟體 ZWSOFT</div><p>總部位於中國廣州</p></div>
+    <div class="tile"><div class="lab">授權</div><div class="val">永久授權</div><p>官網標價 US$899 起</p></div>
+    <div class="tile"><div class="lab">檔案</div><div class="val">原生 DWG</div><p>直接讀寫，不需轉檔</p></div>
+    <div class="tile"><div class="lab">開發介面</div><div class="val">LISP、VBA、ZRX、.NET</div><p>各版本支援範圍不同</p></div>
+  </div>
+  <h3 class="block" style="margin-top:40px">功能比較</h3>
+  <table class="stack">
+    <thead><tr><th>項目</th><th>ZWCAD</th><th>AutoCAD</th></tr></thead>
+    <tbody>
+      <tr><td>DWG</td><td>原生讀寫；獨立評測顯示基本物件一致</td><td>原生格式</td></tr>
+      <tr><td>動態圖塊</td><td>Flexiblock 可開啟、編輯（廠商說法）</td><td>完整</td></tr>
+      <tr><td>LISP 與 API</td><td>AutoLISP、VBA、ZRX、.NET；.NET 專案可移植</td><td>完整</td></tr>
+      <tr><td>2D 效能</td><td>廠商自測 2D 操作快 1.98 倍</td><td>基準</td></tr>
+      <tr><td>授權方式</td><td>永久授權，US$899 起</td><td>訂閱制</td></tr>
+      <tr><td>BIM 相關</td><td>2026 1.1 起標準版不支援 IFC 與 RVT 匯入</td><td>依產品組合</td></tr>
+    </tbody>
+  </table>
+  <h3 class="block" style="margin-top:40px">可用性風險</h3>
+  <table class="stack">
+    <thead><tr><th>風險</th><th>說明</th><th>程度</th></tr></thead>
+    <tbody>
+      <tr><td>採購規範</td><td>中國大陸廠牌軟體；公務機關與政府案件可能受使用限制，請依機關或業主規定確認</td><td><span class="lv hi">高（公部門案件）</span></td></tr>
+      <tr><td>動態圖塊</td><td>2026-03 論壇回報：重開檔後動態圖塊被改名、失去功能</td><td><span class="lv hi">高（大量使用者）</span></td></tr>
+      <tr><td>已編譯程式</td><td>AutoCAD 的 .fas／.vlx、ObjectARX 外掛需原始碼或重新編譯（一般經驗，請實測）</td><td><span class="lv mid">中</span></td></tr>
+      <tr><td>外掛與字型</td><td>使用者回報：特定外掛、自訂字型的圖檔顯示不完全</td><td><span class="lv mid">中</span></td></tr>
+      <tr><td>資料來源</td><td>效能與相容性數據多為廠商自測，缺少獨立驗證</td><td><span class="lv mid">中</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 7 結論 -->
+<section class="view" id="summary" data-title="結論與來源">
+  <p class="kicker">結論</p>
+  <h2>三套軟體的定位</h2>
+  <p class="lead">CADCraft 拿來試，ZWCAD 拿來省，AutoCAD 拿來交件。</p>
+  <div class="steps">
+    <div class="card"><div class="swatch" style="background:var(--sage)"></div><p class="tag">開源試用</p><h3>CADCraft</h3><p>免費、跨平台、可接 AI 代理；pre-alpha，存檔會遺失資料，只適合學習與實驗。</p></div>
+    <div class="card"><div class="swatch" style="background:var(--clay)"></div><p class="tag">低成本替代</p><h3>ZWCAD</h3><p>原生 DWG、永久授權；動態圖塊與已編譯外掛需實測，公部門案件先確認規範。</p></div>
+    <div class="card"><div class="swatch" style="background:var(--walnut)"></div><p class="tag">業界標準</p><h3>AutoCAD</h3><p>相容性與生態系最完整；訂閱成本最高，是正式交付最穩妥的選擇。</p></div>
+  </div>
+  <div class="block closing">
+    <h2>資料來源</h2>
+    <p>資料截至 2026-11-24。CADCraft 版本更新很快，請以官方儲存庫為準。</p>
+    <ul>
+      <li><a href="https://github.com/storytold/cadcraft">CADCraft 官方 README（GitHub）</a></li>
+      <li><a href="https://pasqualepillitteri.it/en/news/22966/cadcraft-free-autocad-alternative-rust">Pasquale Pillitteri：CADCraft 評測（2026-11-12 更新）</a></li>
+      <li><a href="https://www.zwsoft.com/product/autocad-comparison">ZWSOFT：ZWCAD 與 AutoCAD 比較頁</a></li>
+      <li><a href="https://zwsoft.com/zwcad/expert-review/zwcad-great-compatibility-easy-online-workflow-and-impressive-net-api">ZWCAD 專家評測：相容性與 .NET API</a></li>
+      <li><a href="https://www.cadforum.cz/forum_en/printer_friendly_posts.asp?TID=14769">CAD Forum：動態圖塊討論串（2026-03）</a></li>
+      <li><a href="https://g2.com/products/zwcad/reviews">G2</a> 與 <a href="https://capterra.com/p/176603/ZWCAD/reviews/">Capterra</a> 使用者評論</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<nav class="bar" aria-label="章節選單">
+  <div class="barin">
+    <button class="arrow" id="prev" aria-label="上一頁">‹</button>
+    <div class="tabs" id="tabs"></div>
+    <span class="count" id="count"></span>
+    <button class="arrow" id="next" aria-label="下一頁">›</button>
+  </div>
+</nav>
+
+<script>
+{
+  const notes = {home:'封面與章節', cadcraft:'開發者、授權、成熟度', compare:'繪圖、檔案、LISP 逐項對照', risks:'資料遺失、DWG 交換等', advice:'適合與不建議、試用三步驟', zwcad:'概況、比較、風險', summary:'三方定位與資料來源'};
+  const colors = {home:'#E6DCCD', cadcraft:'#8E9A78', compare:'#C9BBA8', risks:'#C47658', advice:'#6F7A5C', zwcad:'#B07A5E', summary:'#5A4A40'};
+  const views = [...document.querySelectorAll('section.view')];
+  const ids = views.map(v => v.id);
+  const tabs = document.getElementById('tabs');
+  const toc = document.getElementById('toc');
+  const count = document.getElementById('count');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+
+  tabs.innerHTML = views.map(v => `<button type="button" data-go="${v.id}"><span class="sw" style="background:${colors[v.id]}"></span>${v.dataset.title}</button>`).join('');
+  toc.innerHTML = views.slice(1).map(v => `<button type="button" data-go="${v.id}"><span class="dot" style="background:${colors[v.id]}"></span><span><b>${v.dataset.title}</b><span>${notes[v.id]}</span></span></button>`).join('');
+
+  function show(id, push) {
+    if (!ids.includes(id)) id = 'home';
+    const i = ids.indexOf(id);
+    views.forEach(v => v.classList.toggle('on', v.id === id));
+    tabs.querySelectorAll('button').forEach(b => {
+      const on = b.dataset.go === id;
+      if (on) { b.setAttribute('aria-current', 'page'); b.scrollIntoView({block:'nearest', inline:'nearest'}); }
+      else b.removeAttribute('aria-current');
+    });
+    count.textContent = (i + 1) + ' / ' + ids.length;
+    prev.disabled = i === 0;
+    next.disabled = i === ids.length - 1;
+    document.title = (id === 'home' ? '' : views[i].dataset.title + ' · ') + 'CAD 軟體評估';
+    if (push && location.hash.slice(1) !== id) location.hash = id;
+    window.scrollTo({top:0});
+  }
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-go]');
+    if (b) show(b.dataset.go, true);
+  });
+  const step = d => {
+    const i = ids.indexOf(location.hash.slice(1));
+    const j = Math.min(ids.length - 1, Math.max(0, (i < 0 ? 0 : i) + d));
+    show(ids[j], true);
+  };
+  prev.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input,textarea')) return;
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') step(-1);
+  });
+  window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+  show(location.hash.slice(1), false);
+}
+</script>
+</body>
+</html>
